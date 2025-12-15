@@ -26,7 +26,7 @@ class SimpleContentExtractor:
         try:
             if source_type == "pdf":
                 return await self._extract_pdf_content(source)
-            elif source_type in ["documentation", "webpage", "guide", "best-practice"]:
+            elif source_type in ["documentation", "webpage", "guide", "best-practice", "whitepaper"]:
                 return await self._extract_web_content(source)
             else:
                 print(f"Unsupported source type: {source_type}")

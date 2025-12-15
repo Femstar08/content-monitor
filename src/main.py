@@ -84,7 +84,8 @@ async def save_output(data: Any, filename: str = None) -> None:
         from apify import Actor
         await Actor.push_data(data)
         return
-    except ImportError:
+    except (ImportError, RuntimeError):
+        # RuntimeError occurs when Actor is not initialized
         pass
     
     # Fallback to local file output
@@ -103,6 +104,18 @@ async def save_output(data: Any, filename: str = None) -> None:
 
 async def main():
     """Main execution function."""
+    # Initialize Apify Actor
+    try:
+        from apify import Actor
+        async with Actor:
+            await run_actor()
+    except ImportError:
+        # Run without Apify if not available
+        await run_actor()
+
+
+async def run_actor():
+    """Run the actual actor logic."""
     logger = setup_logger()
     logger.info("Starting AWS Content Monitor")
     
