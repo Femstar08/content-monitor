@@ -135,11 +135,15 @@ class SimpleSourceDiscovery:
                    'whitepaper' in url_lower or
                    'documentation' in url_lower or
                    '/guides/' in url_lower or
-                   '/best-practices/' in url_lower)
+                   '/best-practices/' in url_lower or
+                   '/security/' in url_lower or
+                   '/architecture/' in url_lower or
+                   'well-architected' in url_lower)
         
         return ('documentation' in url_lower or 
                 'whitepaper' in url_lower or
-                '/guides/' in url_lower)
+                '/guides/' in url_lower or
+                '/security/' in url_lower)
     
     def _should_crawl(self, url: str) -> bool:
         """Check if URL should be crawled for more links."""

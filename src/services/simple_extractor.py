@@ -24,13 +24,14 @@ class SimpleContentExtractor:
         print(f"Extracting content from {source_type}: {url}")
         
         try:
-            if source_type == "pdf":
+            # Handle PDF URLs specially
+            if url.lower().endswith('.pdf'):
                 return await self._extract_pdf_content(source)
             elif source_type in ["documentation", "webpage", "guide", "best-practice", "whitepaper"]:
                 return await self._extract_web_content(source)
             else:
-                print(f"Unsupported source type: {source_type}")
-                return None
+                print(f"Trying to extract as webpage: {source_type}")
+                return await self._extract_web_content(source)
                 
         except Exception as e:
             print(f"Failed to extract content from {url}: {e}")
