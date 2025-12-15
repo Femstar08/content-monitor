@@ -1,0 +1,30 @@
+{
+  "default_aws_feeds": [
+    "https://aws.amazon.com/about-aws/whats-new/recent/feed/",
+    "https://aws.amazon.com/blogs/aws/feed/"
+  ],
+  "default_domains": [
+    "aws.amazon.com",
+    "docs.aws.amazon.com"
+  ],
+  "extraction_settings": {
+    "max_content_length": 1000000,
+    "timeout_seconds": 30,
+    "retry_attempts": 3
+  },
+  "change_detection": {
+    "similarity_threshold": 0.8,
+    "impact_score_weights": {
+      "security": 1.0,
+      "feature": 0.7,
+      "deprecation": 0.9,
+      "bugfix": 0.5,
+      "documentation": 0.3
+    }
+  },
+  "digest_generation": {
+    "max_changes_per_digest": 100,
+    "high_impact_threshold": 0.7,
+    "include_low_impact": false
+  }
+}

@@ -1,0 +1,29 @@
+# Core dependencies
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+feedparser>=6.0.0
+PyPDF2>=3.0.0
+python-docx>=0.8.11
+
+# Data processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+hypothesis>=6.82.0
+
+# Utilities
+python-dateutil>=2.8.0
+croniter>=1.4.0
+click>=8.1.0
+
+# Optional Apify integration
+apify>=1.6.0
+
+# Development
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.5.0

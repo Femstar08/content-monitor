@@ -1,0 +1,110 @@
+{
+  "title": "AWS Content Monitor Input",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "mode": {
+      "title": "Execution Mode",
+      "type": "string",
+      "description": "Choose what type of monitoring to perform",
+      "enum": ["profile", "global", "custom"],
+      "enumTitles": ["Resource Profile", "Global AWS Monitoring", "Custom URLs"],
+      "default": "global"
+    },
+    "profileId": {
+      "title": "Resource Profile ID",
+      "type": "string",
+      "description": "ID of the resource profile to execute (required for profile mode)",
+      "editor": "textfield"
+    },
+    "customUrls": {
+      "title": "Custom URLs",
+      "type": "array",
+      "description": "List of URLs to monitor (for custom mode)",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "reportingPeriod": {
+      "title": "Reporting Period",
+      "type": "object",
+      "description": "Date range for change detection and digest generation",
+      "properties": {
+        "startDate": {
+          "title": "Start Date",
+          "type": "string",
+          "format": "date",
+          "description": "Start date for the reporting period (YYYY-MM-DD)"
+        },
+        "endDate": {
+          "title": "End Date", 
+          "type": "string",
+          "format": "date",
+          "description": "End date for the reporting period (YYYY-MM-DD)"
+        }
+      },
+      "required": ["startDate", "endDate"]
+    },
+    "scrapingConfig": {
+      "title": "Scraping Configuration",
+      "type": "object",
+      "description": "Configuration for content discovery and extraction",
+      "properties": {
+        "maxDepth": {
+          "title": "Maximum Scraping Depth",
+          "type": "integer",
+          "description": "Maximum depth for following links",
+          "minimum": 1,
+          "maximum": 5,
+          "default": 2
+        },
+        "includeDownloads": {
+          "title": "Include Downloads",
+          "type": "boolean",
+          "description": "Whether to download and process PDF/DOCX files",
+          "default": true
+        },
+        "allowedDomains": {
+          "title": "Allowed Domains",
+          "type": "array",
+          "description": "List of domains to include (empty = all AWS domains)",
+          "items": {
+            "type": "string"
+          },
+          "default": ["aws.amazon.com", "docs.aws.amazon.com"]
+        }
+      }
+    },
+    "outputConfig": {
+      "title": "Output Configuration",
+      "type": "object",
+      "description": "Configuration for output generation",
+      "properties": {
+        "generateDigest": {
+          "title": "Generate Intelligence Digest",
+          "type": "boolean",
+          "description": "Whether to generate a human-readable digest",
+          "default": true
+        },
+        "outputFormats": {
+          "title": "Output Formats",
+          "type": "array",
+          "description": "Formats to generate for the digest",
+          "items": {
+            "type": "string",
+            "enum": ["text", "html", "pdf", "json"]
+          },
+          "default": ["text", "json"]
+        },
+        "includeRawData": {
+          "title": "Include Raw Data",
+          "type": "boolean", 
+          "description": "Whether to include raw extracted content in output",
+          "default": false
+        }
+      }
+    }
+  },
+  "required": ["mode", "reportingPeriod"]
+}
