@@ -9,7 +9,8 @@
       "description": "Choose what type of monitoring to perform",
       "enum": ["profile", "global", "custom"],
       "enumTitles": ["Resource Profile", "Global AWS Monitoring", "Custom URLs"],
-      "default": "global"
+      "default": "global",
+      "editor": "select"
     },
     "profileId": {
       "title": "Resource Profile ID",
@@ -21,6 +22,7 @@
       "title": "Custom URLs",
       "type": "array",
       "description": "List of URLs to monitor (for custom mode)",
+      "editor": "stringList",
       "items": {
         "type": "string",
         "format": "uri"
@@ -30,18 +32,21 @@
       "title": "Reporting Period",
       "type": "object",
       "description": "Date range for change detection and digest generation",
+      "editor": "json",
       "properties": {
         "startDate": {
           "title": "Start Date",
           "type": "string",
           "format": "date",
-          "description": "Start date for the reporting period (YYYY-MM-DD)"
+          "description": "Start date for the reporting period (YYYY-MM-DD)",
+          "editor": "textfield"
         },
         "endDate": {
           "title": "End Date", 
           "type": "string",
           "format": "date",
-          "description": "End date for the reporting period (YYYY-MM-DD)"
+          "description": "End date for the reporting period (YYYY-MM-DD)",
+          "editor": "textfield"
         }
       },
       "required": ["startDate", "endDate"]
@@ -50,6 +55,7 @@
       "title": "Scraping Configuration",
       "type": "object",
       "description": "Configuration for content discovery and extraction",
+      "editor": "json",
       "properties": {
         "maxDepth": {
           "title": "Maximum Scraping Depth",
@@ -57,18 +63,21 @@
           "description": "Maximum depth for following links",
           "minimum": 1,
           "maximum": 5,
-          "default": 2
+          "default": 2,
+          "editor": "number"
         },
         "includeDownloads": {
           "title": "Include Downloads",
           "type": "boolean",
           "description": "Whether to download and process PDF/DOCX files",
-          "default": true
+          "default": true,
+          "editor": "checkbox"
         },
         "allowedDomains": {
           "title": "Allowed Domains",
           "type": "array",
           "description": "List of domains to include (empty = all AWS domains)",
+          "editor": "stringList",
           "items": {
             "type": "string"
           },
@@ -80,17 +89,20 @@
       "title": "Output Configuration",
       "type": "object",
       "description": "Configuration for output generation",
+      "editor": "json",
       "properties": {
         "generateDigest": {
           "title": "Generate Intelligence Digest",
           "type": "boolean",
           "description": "Whether to generate a human-readable digest",
-          "default": true
+          "default": true,
+          "editor": "checkbox"
         },
         "outputFormats": {
           "title": "Output Formats",
           "type": "array",
           "description": "Formats to generate for the digest",
+          "editor": "select",
           "items": {
             "type": "string",
             "enum": ["text", "html", "pdf", "json"]
@@ -101,7 +113,8 @@
           "title": "Include Raw Data",
           "type": "boolean", 
           "description": "Whether to include raw extracted content in output",
-          "default": false
+          "default": false,
+          "editor": "checkbox"
         }
       }
     }
