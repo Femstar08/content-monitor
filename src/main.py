@@ -131,24 +131,70 @@ async def main():
             "errors": []
         }
         
-        # TODO: Implement actual processing logic
-        # This is a placeholder for the core implementation
-        logger.info("Processing logic will be implemented in subsequent tasks")
+        # Import services for actual processing
+        from .services.simple_discovery import SimpleSourceDiscovery
+        from .services.simple_extractor import SimpleContentExtractor
         
-        # For now, create a sample output to demonstrate the schema
+        # Initialize services
+        discovery_service = SimpleSourceDiscovery(input_config["scrapingConfig"])
+        extraction_service = SimpleContentExtractor(input_config["scrapingConfig"])
+        
+        logger.info("Starting source discovery...")
+        
+        # Determine starting URLs based on mode
+        starting_urls = []
+        if input_config["mode"] == "custom" and input_config["customUrls"]:
+            starting_urls = input_config["customUrls"]
+        elif input_config["mode"] == "profile" and input_config["profileId"]:
+            # For profile mode, you'd load profile-specific URLs from a database
+            # For now, use default AWS URLs
+            starting_urls = ["https://aws.amazon.com/whitepapers/", "https://docs.aws.amazon.com/"]
+        else:
+            # Global mode - comprehensive AWS monitoring
+            starting_urls = [
+                "https://aws.amazon.com/whitepapers/",
+                "https://docs.aws.amazon.com/",
+                "https://aws.amazon.com/blogs/security/",
+                "https://aws.amazon.com/architecture/",
+                "https://aws.amazon.com/getting-started/"
+            ]
+        
+        # Discover sources (PDFs and documents)
+        discovered_sources = await discovery_service.discover_sources(starting_urls)
+        execution_result["sources_discovered"] = len(discovered_sources)
+        logger.info(f"Discovered {len(discovered_sources)} sources")
+        
+        # Extract content from discovered sources
+        extracted_content = []
+        for source in discovered_sources:
+            try:
+                content = await extraction_service.extract_content(source)
+                if content:
+                    extracted_content.append(content)
+                    execution_result["content_extracted"] += 1
+            except Exception as e:
+                logger.warning(f"Failed to extract content from {source.get('url', 'unknown')}: {e}")
+                execution_result["errors"].append(f"Extraction failed for {source.get('url', 'unknown')}: {str(e)}")
+        
+        logger.info(f"Extracted content from {len(extracted_content)} sources")
+        
+        # Create comprehensive output
         sample_output = {
             "execution_summary": {
                 "execution_id": execution_result["execution_id"],
                 "started_at": execution_result["started_at"],
                 "completed_at": datetime.now().isoformat(),
                 "status": "completed",
-                "sources_discovered": 0,
-                "content_extracted": 0,
-                "changes_detected": 0,
-                "digest_generated": False,
+                "sources_discovered": execution_result["sources_discovered"],
+                "content_extracted": execution_result["content_extracted"],
+                "changes_detected": 0,  # TODO: Implement change detection
+                "digest_generated": input_config["outputConfig"]["generateDigest"],
                 "_scrapedAt": datetime.now().isoformat(),
                 "_source": "aws-content-monitor"
-            }
+            },
+            "sources": discovered_sources,
+            "extracted_content": extracted_content[:10],  # Limit output size
+            "configuration": input_config
         }
         
         # Save output
