@@ -77,12 +77,12 @@ def transform_input(raw_input: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def save_output(data: Any, filename: str = None) -> None:
+async def save_output(data: Any, filename: str = None) -> None:
     """Save output data to Apify dataset or local file."""
     # Try to use Apify dataset first
     try:
         from apify import Actor
-        Actor.push_data(data)
+        await Actor.push_data(data)
         return
     except ImportError:
         pass
@@ -152,7 +152,7 @@ async def main():
         }
         
         # Save output
-        save_output(sample_output)
+        await save_output(sample_output)
         
         logger.info("AWS Content Monitor completed successfully")
         
@@ -164,7 +164,7 @@ async def main():
             "_scrapedAt": datetime.now().isoformat(),
             "_source": "aws-content-monitor"
         }
-        save_output(error_output)
+        await save_output(error_output)
         sys.exit(1)
 
 
