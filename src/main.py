@@ -19,24 +19,60 @@ def load_input() -> Dict[str, Any]:
     
     if os.path.exists(input_path):
         with open(input_path, 'r') as f:
-            return json.load(f)
-    
-    # Fallback to default configuration for development
-    return {
-        "mode": "global",
-        "reportingPeriod": {
+            raw_input = json.load(f)
+    else:
+        # Fallback to default configuration for development
+        raw_input = {
+            "mode": "global",
             "startDate": "2024-01-01",
-            "endDate": "2024-01-31"
-        },
-        "scrapingConfig": {
+            "endDate": "2024-01-31",
             "maxDepth": 2,
             "includeDownloads": True,
-            "allowedDomains": ["aws.amazon.com", "docs.aws.amazon.com"]
+            "allowedDomains": "aws.amazon.com\ndocs.aws.amazon.com",
+            "generateDigest": True,
+            "outputFormats": "text,json",
+            "includeRawData": False
+        }
+    
+    # Transform flat input to structured format
+    return transform_input(raw_input)
+
+
+def transform_input(raw_input: Dict[str, Any]) -> Dict[str, Any]:
+    """Transform flat Apify input to structured format."""
+    # Parse custom URLs from textarea
+    custom_urls = []
+    if raw_input.get("customUrls"):
+        custom_urls = [url.strip() for url in raw_input["customUrls"].split('\n') if url.strip()]
+    
+    # Parse allowed domains from textarea
+    allowed_domains = ["aws.amazon.com", "docs.aws.amazon.com"]  # default
+    if raw_input.get("allowedDomains"):
+        allowed_domains = [domain.strip() for domain in raw_input["allowedDomains"].split('\n') if domain.strip()]
+    
+    # Parse output formats from comma-separated string
+    output_formats = ["text", "json"]  # default
+    if raw_input.get("outputFormats"):
+        output_formats = [fmt.strip() for fmt in raw_input["outputFormats"].split(',') if fmt.strip()]
+    
+    # Return structured configuration
+    return {
+        "mode": raw_input.get("mode", "global"),
+        "profileId": raw_input.get("profileId"),
+        "customUrls": custom_urls,
+        "reportingPeriod": {
+            "startDate": raw_input.get("startDate", "2024-01-01"),
+            "endDate": raw_input.get("endDate", "2024-01-31")
+        },
+        "scrapingConfig": {
+            "maxDepth": raw_input.get("maxDepth", 2),
+            "includeDownloads": raw_input.get("includeDownloads", True),
+            "allowedDomains": allowed_domains
         },
         "outputConfig": {
-            "generateDigest": True,
-            "outputFormats": ["text", "json"],
-            "includeRawData": False
+            "generateDigest": raw_input.get("generateDigest", True),
+            "outputFormats": output_formats,
+            "includeRawData": raw_input.get("includeRawData", False)
         }
     }
 
